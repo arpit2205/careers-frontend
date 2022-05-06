@@ -9,9 +9,14 @@ import theme from "./theme";
 // Fonts
 import "./theme/styles.css";
 
+////
+import { AuthProvider } from "./contexts/authContext";
+
 ReactDOM.render(
   <ChakraProvider theme={theme}>
-    <App />
+    <AuthProvider>
+      <App />
+    </AuthProvider>
   </ChakraProvider>,
   document.getElementById("root")
 );
