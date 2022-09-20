@@ -9,7 +9,11 @@ import {
   Button,
 } from "@chakra-ui/react";
 
+import { useJobs } from "../contexts/jobsContext";
+
 const RightPanel = () => {
+  const { jobs, setJobs, filteredJobs, setFilteredJobs } = useJobs();
+
   return (
     <Box
       w={[0, 0, "30%"]}
@@ -19,7 +23,7 @@ const RightPanel = () => {
       py={[4, null, 6, 8]}
       my={[12]}
       mr={[0, null, 6, 12]}
-      border="2px"
+      border="1px"
       borderColor="gray.100"
       borderRadius={8}
     >
@@ -34,7 +38,6 @@ const RightPanel = () => {
         </Text>
         <Box>
           <CheckboxGroup colorScheme="pink">
-            {/* <Stack spacing={[1, 5]} direction={["row"]}> */}
             <Checkbox value="engineering" mr={[6]} mt={[2]} color={"gray.500"}>
               Engineering
             </Checkbox>
@@ -47,13 +50,12 @@ const RightPanel = () => {
             <Checkbox value="devops" mr={[6]} mt={[2]} color={"gray.500"}>
               DevOps
             </Checkbox>
-            <Checkbox value="ogistics" mr={[6]} mt={[2]} color={"gray.500"}>
+            <Checkbox value="logistics" mr={[6]} mt={[2]} color={"gray.500"}>
               Logistics
             </Checkbox>
-            <Checkbox value="management" mr={[6]} mt={[2]} color={"gray.500"}>
-              Management
+            <Checkbox value="operations" mr={[6]} mt={[2]} color={"gray.500"}>
+              Operations
             </Checkbox>
-            {/* </Stack> */}
           </CheckboxGroup>
         </Box>
       </Box>

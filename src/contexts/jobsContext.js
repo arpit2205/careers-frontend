@@ -9,10 +9,18 @@ export const useJobs = () => {
 export const JobsProvider = ({ children }) => {
   const [jobs, setJobs] = useState([]);
   const [filteredJobs, setFilteredJobs] = useState([]);
+  const [selectedJob, setSelectedJob] = useState(null);
 
   return (
     <jobsContext.Provider
-      value={{ jobs, setJobs, filteredJobs, setFilteredJobs }}
+      value={{
+        jobs,
+        setJobs,
+        filteredJobs,
+        setFilteredJobs,
+        selectedJob,
+        setSelectedJob,
+      }}
     >
       {children}
     </jobsContext.Provider>

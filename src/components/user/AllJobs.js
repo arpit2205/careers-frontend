@@ -12,13 +12,15 @@ import {
   Skeleton,
 } from "@chakra-ui/react";
 
+import { Link } from "react-router-dom";
+
 import { SearchIcon } from "@chakra-ui/icons";
 
-import { getAllJobs } from "../api/jobs";
+import { getAllJobs } from "../../api/jobs";
 
-import { ToastConfig } from "./ToastConfig";
+import { ToastConfig } from "../ToastConfig";
 
-import { useJobs } from "../contexts/jobsContext";
+import { useJobs } from "../../contexts/jobsContext";
 
 const AllJobs = () => {
   const { jobs, setJobs, filteredJobs, setFilteredJobs } = useJobs();
@@ -50,6 +52,7 @@ const AllJobs = () => {
 
   useEffect(() => {
     fetchAllJobs();
+    window.scrollTo(0, 0);
   }, []);
 
   const handleSearch = (e) => {
@@ -134,7 +137,7 @@ const AllJobs = () => {
               {/* actions */}
               <Box>
                 <Button variant={"link"} color={"blue.400"} mt={[6]}>
-                  View description
+                  <Link to={`/job/${job._id}`}>View description</Link>
                 </Button>
               </Box>
             </Box>

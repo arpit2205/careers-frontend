@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Heading, Tab, Tabs, TabList } from "@chakra-ui/react";
+import { Box, Heading, Tab, Tabs, TabList, Alert } from "@chakra-ui/react";
 
 import { useAuth } from "../contexts/authContext";
 
@@ -76,7 +76,27 @@ const Sidebar = () => {
           </Tabs>
         </Box>
       ) : (
-        "Noo"
+        <>
+          <Alert
+            status="info"
+            mb="4"
+            borderRadius="8"
+            bgColor={"blue.50"}
+            color={"blue.600"}
+          >
+            To use this application as a user, please register or login.
+          </Alert>
+          <Alert
+            status="warning"
+            borderRadius="8"
+            bgColor={"orange.50"}
+            color={"orange.600"}
+          >
+            To use this application as an admin, please login using the
+            following credentials: <br />
+            <br /> Username: admin <br /> Password: admin123
+          </Alert>
+        </>
       )}
     </Box>
   );

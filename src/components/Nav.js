@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Heading,
@@ -18,15 +18,29 @@ import AuthModal from "./AuthModal";
 
 import { useAuth } from "../contexts/authContext";
 
+import jwt_decode from "jwt-decode";
+
 const Nav = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [modalType, setModalType] = useState("");
 
   const { isAuthenticated, setIsAuthenticated, user, setUser } = useAuth();
 
+  useEffect(() => {
+    if (window.localStorage.getItem("jwt-token")) {
+      const token = window.localStorage.getItem("jwt-token");
+      const decoded = jwt_decode(token);
+      setUser(decoded);
+      setIsAuthenticated(true);
+    }
+  }, []);
+
   const handleLogout = () => {
     setIsAuthenticated(false);
     setUser(null);
+
+    //remove token from local storage
+    window.localStorage.removeItem("jwt-token");
   };
 
   // Setting current screen width to state in real time

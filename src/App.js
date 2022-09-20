@@ -6,34 +6,16 @@ import { JobsProvider } from "./contexts/jobsContext";
 
 import Nav from "./components/Nav";
 import Sidebar from "./components/Sidebar";
-import AllJobs from "./components/AllJobs";
+import AllJobs from "./components/user/AllJobs";
 import RightPanel from "./components/RightPanel";
 
-import JobDescription from "./components/JobDescription";
+import BaseLayout from "./router/BaseLayout";
 
 function App() {
   return (
     <AuthProvider>
       <JobsProvider>
-        <Box
-          w="100%"
-          d="flex"
-          justifyContent={"center"}
-          flexDirection={["column"]}
-        >
-          <Nav />
-          <Box
-            w="100%"
-            d="flex"
-            justifyContent={"flex-start"}
-            flexDirection={["column", null, "row"]}
-          >
-            <Sidebar />
-            {/* <AllJobs /> */}
-            <JobDescription />
-            <RightPanel />
-          </Box>
-        </Box>
+        <BaseLayout />
       </JobsProvider>
     </AuthProvider>
   );
