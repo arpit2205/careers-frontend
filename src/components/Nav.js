@@ -17,6 +17,7 @@ import { HamburgerIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import AuthModal from "./AuthModal";
 
 import { useAuth } from "../contexts/authContext";
+import { useProfile } from "../contexts/profileContext";
 
 import jwt_decode from "jwt-decode";
 
@@ -25,6 +26,7 @@ const Nav = () => {
   const [modalType, setModalType] = useState("");
 
   const { isAuthenticated, setIsAuthenticated, user, setUser } = useAuth();
+  const { profile, setProfile } = useProfile();
 
   useEffect(() => {
     if (window.localStorage.getItem("jwt-token")) {
@@ -38,6 +40,7 @@ const Nav = () => {
   const handleLogout = () => {
     setIsAuthenticated(false);
     setUser(null);
+    setProfile(null);
 
     //remove token from local storage
     window.localStorage.removeItem("jwt-token");

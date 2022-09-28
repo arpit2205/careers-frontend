@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Heading, Box } from "@chakra-ui/react";
 
 import { AuthProvider } from "./contexts/authContext";
 import { JobsProvider } from "./contexts/jobsContext";
+import { ProfileProvider } from "./contexts/profileContext";
+import { UtilProvider } from "./contexts/utilContext";
 
 import Nav from "./components/Nav";
 import Sidebar from "./components/Sidebar";
@@ -15,7 +17,11 @@ function App() {
   return (
     <AuthProvider>
       <JobsProvider>
-        <BaseLayout />
+        <ProfileProvider>
+          <UtilProvider>
+            <BaseLayout />
+          </UtilProvider>
+        </ProfileProvider>
       </JobsProvider>
     </AuthProvider>
   );

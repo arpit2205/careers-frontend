@@ -1,11 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box } from "@chakra-ui/react";
 
 import Nav from "../components/Nav";
 import Sidebar from "../components/Sidebar";
 import RightPanel from "../components/RightPanel";
-
-import AllJobs from "../components/user/AllJobs";
 
 // Routers
 import UserRouter from "./UserRouter";
@@ -19,6 +17,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 const BaseLayout = () => {
   const { isAuthenticated, user } = useAuth();
+
   return (
     <Router>
       <Box

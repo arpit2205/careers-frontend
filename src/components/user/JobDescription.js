@@ -10,21 +10,34 @@ import {
   ListItem,
   useToast,
   Skeleton,
+  useDisclosure,
 } from "@chakra-ui/react";
 
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { useJobs } from "../../contexts/jobsContext";
+import { useProfile } from "../../contexts/profileContext";
+import { useAuth } from "../../contexts/authContext";
+import { useUtil } from "../../contexts/utilContext";
 import { getSpecificJob } from "../../api/jobs";
+import { getMyProfile } from "../../api/profile";
 import { ToastConfig } from "../ToastConfig";
+
+import AuthModal from "../AuthModal";
 
 const JobDescription = () => {
   const { selectedJob, setSelectedJob } = useJobs();
+  const { profile, setProfile } = useProfile();
+  const { isAuthenticated, user } = useAuth();
   const jobId = window.location.pathname.split("/")[2];
   const [loading, setLoading] = useState(false);
+  const [btnLoading, setBtnLoading] = useState(false);
   const toast = useToast();
+  const navigate = useNavigate();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { tabIndex, setTabIndex } = useUtil();
 
   const fetchSpecificJob = async () => {
     try {
@@ -51,6 +64,27 @@ const JobDescription = () => {
     fetchSpecificJob();
     window.scrollTo(0, 0);
   }, []);
+
+  const handleApplyNow = async () => {
+    if (!isAuthenticated && user === null) {
+      toast(ToastConfig("Info", "Please login to apply for this job", "info"));
+      onOpen();
+      return;
+    }
+
+    if (isAuthenticated && profile === null) {
+      toast(
+        ToastConfig(
+          "Info",
+          "Please complete your profile first to apply for jobs",
+          "info"
+        )
+      );
+      setTabIndex(2);
+      navigate("/profile");
+      return;
+    }
+  };
 
   return (
     <Box
@@ -161,12 +195,15 @@ const JobDescription = () => {
               color={"white"}
               py={[10]}
               boxShadow={"0px 0px 40px rgba(66, 153, 225, 0.5)"}
+              onClick={handleApplyNow}
+              isLoading={btnLoading}
             >
               Apply now
             </Button>
           </Box>
         </Box>
       </Skeleton>
+      <AuthModal isOpen={isOpen} onClose={onClose} type={"register"} />
     </Box>
   );
 };

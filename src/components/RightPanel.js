@@ -20,11 +20,11 @@ const RightPanel = () => {
       h={["fit-content"]}
       display={["none", null, "block"]}
       px={[4, null, 6, 8]}
-      py={[4, null, 6, 8]}
+      // py={[4, null, 6, 8]}
       my={[12]}
       mr={[0, null, 6, 12]}
-      border="1px"
-      borderColor="gray.100"
+      // border="1px"
+      // borderColor="gray.100"
       borderRadius={8}
     >
       <Heading color={"gray.600"} fontSize={["lg", null, null, "3xl"]}>

@@ -22,7 +22,9 @@ import {
 import { register, login } from "../api/auth";
 import { ToastConfig } from "./ToastConfig";
 import { useAuth } from "../contexts/authContext";
+import { useUtil } from "../contexts/utilContext";
 import jwt_decode from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 const AuthModal = ({ isOpen, onClose, type }) => {
   const [modalType, setModalType] = useState(type);
@@ -33,8 +35,10 @@ const AuthModal = ({ isOpen, onClose, type }) => {
   const [password, setPassword] = useState("");
 
   const { isAuthenticated, setIsAuthenticated, user, setUser } = useAuth();
+  const { tabIndex, setTabIndex } = useUtil();
 
   const toast = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setModalType(type);
@@ -53,7 +57,7 @@ const AuthModal = ({ isOpen, onClose, type }) => {
             "success"
           )
         );
-        onClose();
+        setModalType("login");
         setUsername("");
         setPassword("");
       } catch (error) {
@@ -72,18 +76,23 @@ const AuthModal = ({ isOpen, onClose, type }) => {
       try {
         const data = await login(username, password);
         console.log(data);
-        toast(ToastConfig("Login successful", "Welcome back!", "success"));
 
         // Decode jwt
         const decoded = jwt_decode(data.data);
         console.log(decoded);
 
+        // Setting jwt in local storage
+        window.localStorage.setItem("jwt-token", data.data);
+
         // Setting up state
         setIsAuthenticated(true);
         setUser(decoded);
 
-        // Setting jwt in local storage
-        window.localStorage.setItem("jwt-token", data.data);
+        toast(ToastConfig("Login successful", "Welcome back!", "success"));
+
+        // change sidebar tab index
+        setTabIndex(2);
+        navigate("/profile");
 
         onClose();
         setUsername("");
@@ -101,8 +110,6 @@ const AuthModal = ({ isOpen, onClose, type }) => {
         );
       }
     }
-
-    console.log("hey");
   };
 
   return (
