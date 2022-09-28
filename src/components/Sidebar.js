@@ -1,10 +1,33 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { Box, Heading, Tab, Tabs, TabList, Alert } from "@chakra-ui/react";
 
 import { useAuth } from "../contexts/authContext";
+import { useUtil } from "../contexts/utilContext";
 
 const Sidebar = () => {
   const { isAuthenticated } = useAuth();
+  const { tabIndex, setTabIndex } = useUtil();
+  const activeStyle = {
+    color: "white",
+    bg: "pink.400",
+    boxShadow: "0px 0px 40px rgba(237, 100, 166, 0.4)",
+  };
+
+  useEffect(() => {
+    if (window.location.pathname === "/") {
+      setTabIndex(0);
+    }
+
+    if (window.location.pathname === "/applications") {
+      setTabIndex(1);
+    }
+
+    if (window.location.pathname === "/profile") {
+      setTabIndex(2);
+    }
+  }, [tabIndex]);
+
   return (
     <Box
       w={[0, 0, "25%"]}
@@ -18,7 +41,14 @@ const Sidebar = () => {
     >
       {isAuthenticated ? (
         <Box w="100%">
-          <Tabs variant="unstyled">
+          <Tabs
+            variant="unstyled"
+            defaultIndex={0}
+            index={tabIndex}
+            onChange={(index) => {
+              setTabIndex(index);
+            }}
+          >
             <TabList
               d="flex"
               justifyContent={"flex-start"}
@@ -32,13 +62,9 @@ const Sidebar = () => {
                 color={"gray.600"}
                 py={[4]}
                 px={[8]}
-                _selected={{
-                  color: "white",
-                  bg: "pink.400",
-                  boxShadow: "0px 0px 40px rgba(237, 100, 166, 0.4)",
-                }}
+                _selected={activeStyle}
               >
-                All jobs
+                <Link to="/">All jobs</Link>
               </Tab>
               <Tab
                 d="flex"
@@ -48,13 +74,9 @@ const Sidebar = () => {
                 color={"gray.600"}
                 py={[4]}
                 px={[8]}
-                _selected={{
-                  color: "white",
-                  bg: "pink.400",
-                  boxShadow: "0px 0px 40px rgba(237, 100, 166, 0.4)",
-                }}
+                _selected={activeStyle}
               >
-                My applications
+                <Link to="/applications">My applications</Link>
               </Tab>
               <Tab
                 d="flex"
@@ -64,13 +86,9 @@ const Sidebar = () => {
                 color={"gray.600"}
                 py={[4]}
                 px={[8]}
-                _selected={{
-                  color: "white",
-                  bg: "pink.400",
-                  boxShadow: "0px 0px 40px rgba(237, 100, 166, 0.4)",
-                }}
+                _selected={activeStyle}
               >
-                My profile
+                <Link to="/profile">My profile</Link>
               </Tab>
             </TabList>
           </Tabs>
