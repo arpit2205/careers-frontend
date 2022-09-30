@@ -133,8 +133,8 @@ const JobDescription = () => {
   return (
     <Box
       w={["100%", null, "45%"]}
-      px={[6, null, 4, 4]}
-      py={[8]}
+      px={[4]}
+      py={[6, null, null, 8]}
       my={[4]}
       mx={[0, null, 4]}
       // border={"1px solid #eeeeee"}
@@ -152,7 +152,7 @@ const JobDescription = () => {
             mt={[4]}
           >
             <Box d="flex" flexDirection={"column"}>
-              <Heading color={"gray.600"} fontSize={["3xl", null, null, "3xl"]}>
+              <Heading color={"gray.600"} fontSize={["2xl", null, null, "3xl"]}>
                 {selectedJob?.role}
               </Heading>
 
@@ -167,8 +167,8 @@ const JobDescription = () => {
           <Box
             d="flex"
             justifyContent={"space-between"}
-            py={[6]}
-            px={[10]}
+            py={[4, null, null, 6]}
+            px={[4, null, null, 10]}
             mt={[6]}
             border="1px"
             borderColor="gray.100"
