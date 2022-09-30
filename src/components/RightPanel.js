@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Heading,
@@ -9,12 +9,19 @@ import {
   Button,
 } from "@chakra-ui/react";
 
+import { useLocation } from "react-router-dom";
+
 import { useJobs } from "../contexts/jobsContext";
 
 const RightPanel = () => {
   const { jobs, setJobs, filteredJobs, setFilteredJobs } = useJobs();
+  const location = useLocation();
 
-  return (
+  useEffect(() => {
+    console.log(location.pathname);
+  }, []);
+
+  return location.pathname === "/" || location.pathname.startsWith("/job/") ? (
     <Box
       w={[0, 0, "30%"]}
       h={["fit-content"]}
@@ -89,6 +96,8 @@ const RightPanel = () => {
         </Button>
       </Box>
     </Box>
+  ) : (
+    ""
   );
 };
 

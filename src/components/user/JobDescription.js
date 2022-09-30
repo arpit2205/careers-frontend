@@ -23,9 +23,12 @@ import { useAuth } from "../../contexts/authContext";
 import { useUtil } from "../../contexts/utilContext";
 import { getSpecificJob } from "../../api/jobs";
 import { getMyProfile } from "../../api/profile";
+import { applyForJob } from "../../api/applications";
 import { ToastConfig } from "../ToastConfig";
 
 import AuthModal from "../AuthModal";
+
+import fire from "../../assets/fire.gif";
 
 const JobDescription = () => {
   const { selectedJob, setSelectedJob } = useJobs();
@@ -63,11 +66,12 @@ const JobDescription = () => {
   useEffect(() => {
     fetchSpecificJob();
     window.scrollTo(0, 0);
+    setTabIndex(0);
   }, []);
 
   const handleApplyNow = async () => {
     if (!isAuthenticated && user === null) {
-      toast(ToastConfig("Info", "Please login to apply for this job", "info"));
+      toast(ToastConfig("Info", "Please login to apply for this job", "error"));
       onOpen();
       return;
     }
@@ -83,6 +87,46 @@ const JobDescription = () => {
       setTabIndex(2);
       navigate("/profile");
       return;
+    }
+
+    if (isAuthenticated && user && profile) {
+      // apply for job
+
+      const applicationData = {
+        job: {
+          id: selectedJob._id,
+          role: selectedJob.role,
+          location: selectedJob.location,
+        },
+        profile: profile,
+      };
+
+      try {
+        setBtnLoading(true);
+        const data = await applyForJob(applicationData);
+        toast(
+          ToastConfig(
+            "Success",
+            "Your application was sent for this job",
+            "success"
+          )
+        );
+        console.log(data);
+        navigate("/applications");
+        setTabIndex(1);
+      } catch (error) {
+        console.log(error.response ? error.response.data : { error });
+        toast(
+          ToastConfig(
+            "Error",
+            error.response
+              ? error.response.data.message
+              : "Backend service unavailable",
+            "error"
+          )
+        );
+      }
+      setBtnLoading(false);
     }
   };
 
@@ -107,9 +151,14 @@ const JobDescription = () => {
             alignItems={"center"}
             mt={[4]}
           >
-            <Heading color={"gray.600"} fontSize={["3xl", null, null, "3xl"]}>
-              {selectedJob?.role}
-            </Heading>
+            <Box d="flex" flexDirection={"column"}>
+              <Heading color={"gray.600"} fontSize={["3xl", null, null, "3xl"]}>
+                {selectedJob?.role}
+              </Heading>
+
+              <Text color={"gray.200"}>Job ID: {selectedJob?._id}</Text>
+            </Box>
+
             <Tag backgroundColor={"blue.400"} color={"white"} opacity={0.6}>
               {selectedJob?.tag}
             </Tag>
@@ -197,8 +246,14 @@ const JobDescription = () => {
               boxShadow={"0px 0px 40px rgba(66, 153, 225, 0.5)"}
               onClick={handleApplyNow}
               isLoading={btnLoading}
+              // fontSize={"18px"}
             >
-              Apply now
+              Apply now{" "}
+              <img
+                width={"32px"}
+                src={fire}
+                style={{ transform: "translate(4px,-4px)" }}
+              />
             </Button>
           </Box>
         </Box>

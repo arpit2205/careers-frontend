@@ -5,6 +5,7 @@ import PageNotFound404 from "../components/PageNotFound404";
 import Profile from "../components/user/Profile";
 import AllJobs from "../components/user/AllJobs";
 import JobDescription from "../components/user/JobDescription";
+import MyApplications from "../components/user/MyApplications";
 
 // Router
 import { Routes, Route } from "react-router-dom";
@@ -23,6 +24,14 @@ const UserRouter = () => {
           element={
             <UserPrivateRoute>
               <Profile />
+            </UserPrivateRoute>
+          }
+        />
+        <Route
+          path="/applications"
+          element={
+            <UserPrivateRoute>
+              <MyApplications />
             </UserPrivateRoute>
           }
         />
