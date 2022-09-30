@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Heading,
@@ -9,17 +9,71 @@ import {
   Button,
 } from "@chakra-ui/react";
 
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { useJobs } from "../contexts/jobsContext";
 
 const RightPanel = () => {
   const { jobs, setJobs, filteredJobs, setFilteredJobs } = useJobs();
+
+  const [fetchedFilters, setFetchedFilters] = useState({
+    location: [],
+    category: [],
+  });
+
+  const [filters, setFilters] = useState({
+    location: "All locations",
+    category: [],
+  });
+
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleApplyFilters = () => {
+    const filteredJobsAsPerFilters = jobs.filter((job) => {
+      if (filters.location !== "All locations") {
+        if (job.location !== filters.location) {
+          return false;
+        }
+      }
+
+      if (filters.category.length > 0) {
+        if (!filters.category.includes(job.tag)) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+
+    setFilteredJobs(filteredJobsAsPerFilters);
+    navigate("/");
+  };
+
+  const handleClearFilters = () => {
+    setFilters({
+      location: "All locations",
+      category: [],
+    });
+
+    setFilteredJobs(jobs);
+  };
 
   useEffect(() => {
-    console.log(location.pathname);
-  }, []);
+    // get list of locations from jobs
+    const locations = jobs.map((job) => job.location);
+    const uniqueLocations = ["All locations", ...new Set(locations)];
+    setFetchedFilters((prev) => ({ ...prev, location: uniqueLocations }));
+
+    // get list of categories from jobs
+    const categories = jobs.map((job) => job.tag);
+    const uniqueCategories = [...new Set(categories)];
+    setFetchedFilters((prev) => ({ ...prev, category: uniqueCategories }));
+  }, [jobs]);
+
+  useEffect(() => {
+    console.log(filters);
+  }, [filters]);
 
   return location.pathname === "/" || location.pathname.startsWith("/job/") ? (
     <Box
@@ -45,24 +99,27 @@ const RightPanel = () => {
         </Text>
         <Box>
           <CheckboxGroup colorScheme="pink">
-            <Checkbox value="engineering" mr={[6]} mt={[2]} color={"gray.500"}>
-              Engineering
-            </Checkbox>
-            <Checkbox value="management" mr={[6]} mt={[2]} color={"gray.500"}>
-              Management
-            </Checkbox>
-            <Checkbox value="design" mr={[6]} mt={[2]} color={"gray.500"}>
-              Design
-            </Checkbox>
-            <Checkbox value="devops" mr={[6]} mt={[2]} color={"gray.500"}>
-              DevOps
-            </Checkbox>
-            <Checkbox value="logistics" mr={[6]} mt={[2]} color={"gray.500"}>
-              Logistics
-            </Checkbox>
-            <Checkbox value="operations" mr={[6]} mt={[2]} color={"gray.500"}>
-              Operations
-            </Checkbox>
+            {fetchedFilters.category.map((category, index) => (
+              <Checkbox
+                isChecked={filters.category.includes(category)}
+                onChange={(e) => {
+                  const newFilters = { ...filters };
+                  if (e.target.checked) {
+                    newFilters.category.push(category);
+                  } else {
+                    newFilters.category = newFilters.category.filter(
+                      (item) => item !== category
+                    );
+                  }
+                  setFilters(newFilters);
+                }}
+                mr={[6]}
+                mt={[2]}
+                color={"gray.500"}
+              >
+                {category}
+              </Checkbox>
+            ))}
           </CheckboxGroup>
         </Box>
       </Box>
@@ -72,16 +129,36 @@ const RightPanel = () => {
           Location
         </Text>
         <Box>
-          <Select placeholder="Select location" color={"gray.500"}>
-            <option value="option1">Delhi</option>
-            <option value="option2">Hyderabad</option>
-            <option value="option3">Bangalore</option>
+          <Select
+            placeholder="Select location"
+            color={"gray.500"}
+            onChange={(e) => {
+              const newFilters = { ...filters };
+              newFilters.location = e.target.value;
+              setFilters(newFilters);
+            }}
+            value={filters.location}
+          >
+            {fetchedFilters.location.map((location) => (
+              <option value={location}>{location}</option>
+            ))}
           </Select>
         </Box>
       </Box>
 
       <Box mt={[6]} d="flex" justifyContent={"flex-end"}>
-        <Button variant={"ghost"} color={"pink.400"} px={[8]} py={[6]} mr={[2]}>
+        <Button
+          variant={"ghost"}
+          color={"pink.400"}
+          px={[8]}
+          py={[6]}
+          mr={[2]}
+          onClick={handleClearFilters}
+          isDisabled={
+            filters.category.length === 0 &&
+            filters.location === "All locations"
+          }
+        >
           Clear
         </Button>
         <Button
@@ -91,6 +168,11 @@ const RightPanel = () => {
           px={[8]}
           py={[6]}
           boxShadow={"0px 8px 40px rgba(237, 100, 166, 0.4)"}
+          onClick={handleApplyFilters}
+          isDisabled={
+            filters.category.length === 0 &&
+            filters.location === "All locations"
+          }
         >
           Apply
         </Button>
