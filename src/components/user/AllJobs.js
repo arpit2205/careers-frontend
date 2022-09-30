@@ -22,6 +22,8 @@ import { ToastConfig } from "../ToastConfig";
 
 import { useJobs } from "../../contexts/jobsContext";
 
+import eyes from "../../assets/eyes.gif";
+
 const AllJobs = () => {
   const { jobs, setJobs, filteredJobs, setFilteredJobs } = useJobs();
   const [loading, setLoading] = useState(false);
@@ -51,7 +53,9 @@ const AllJobs = () => {
   };
 
   useEffect(() => {
-    fetchAllJobs();
+    if (jobs.length === 0) {
+      fetchAllJobs();
+    }
     window.scrollTo(0, 0);
   }, []);
 
@@ -103,45 +107,62 @@ const AllJobs = () => {
       <Box d="flex" justifyContent={"center"} flexDirection={"column"}>
         <Skeleton isLoaded={!loading}>
           {/* individual */}
-          {filteredJobs.map((job) => (
-            <Box
-              borderRadius={8}
-              border="2px"
-              borderColor="gray.100"
-              p={[6]}
-              mb={[4]}
-            >
-              <Box d="flex" justifyContent={"space-between"}>
+          {filteredJobs.length > 0 ? (
+            <>
+              {filteredJobs.map((job) => (
                 <Box
-                  d="flex"
-                  justifyContent={"flex-start"}
-                  flexDirection={"column"}
+                  borderRadius={8}
+                  border="2px"
+                  borderColor="gray.100"
+                  p={[6]}
+                  mb={[4]}
                 >
-                  <Heading fontSize={["xl"]} color={"gray.600"}>
-                    {job.role}
-                  </Heading>
-                  <Text color={"gray.400"} mt={[1]}>
-                    {job.location}
-                  </Text>
+                  <Box d="flex" justifyContent={"space-between"}>
+                    <Box
+                      d="flex"
+                      justifyContent={"flex-start"}
+                      flexDirection={"column"}
+                    >
+                      <Heading fontSize={["xl"]} color={"gray.600"}>
+                        {job.role}
+                      </Heading>
+                      <Text color={"gray.400"} mt={[1]}>
+                        {job.location}
+                      </Text>
+                    </Box>
+                    <Box>
+                      <Tag
+                        color={"white"}
+                        backgroundColor={"blue.400"}
+                        opacity="0.6"
+                      >
+                        {job.tag}
+                      </Tag>
+                    </Box>
+                  </Box>
+                  {/* actions */}
+                  <Box>
+                    <Button variant={"link"} color={"blue.400"} mt={[6]}>
+                      <Link to={`/job/${job._id}`}>View description</Link>
+                    </Button>
+                  </Box>
                 </Box>
-                <Box>
-                  <Tag
-                    color={"white"}
-                    backgroundColor={"blue.400"}
-                    opacity="0.6"
-                  >
-                    {job.tag}
-                  </Tag>
-                </Box>
-              </Box>
-              {/* actions */}
-              <Box>
-                <Button variant={"link"} color={"blue.400"} mt={[6]}>
-                  <Link to={`/job/${job._id}`}>View description</Link>
-                </Button>
-              </Box>
+              ))}
+            </>
+          ) : (
+            <Box
+              d="flex"
+              justifyContent={"center"}
+              flexDirection={"column"}
+              textAlign={"center"}
+              mt={[10]}
+            >
+              <img src={eyes} width={"50px"} style={{ margin: "auto" }} />
+              <Text color={"gray.400"} mt={[1]}>
+                No jobs found
+              </Text>
             </Box>
-          ))}
+          )}
         </Skeleton>
       </Box>
     </Box>
