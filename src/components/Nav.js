@@ -21,6 +21,8 @@ import { useProfile } from "../contexts/profileContext";
 
 import jwt_decode from "jwt-decode";
 
+import { Link } from "react-router-dom";
+
 const Nav = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [modalType, setModalType] = useState("");
@@ -53,9 +55,9 @@ const Nav = () => {
   });
 
   return (
-    <Box py={[6]} px={[6, null, null, 12]} w="100%" d="flex">
+    <Box py={[6]} px={[4, null, null, 12]} w="100%" d="flex">
       <Box>
-        <Heading>Careers</Heading>
+        <Heading color={"gray.700"}>Careers</Heading>
       </Box>
       <Box ml="auto">
         {
@@ -65,7 +67,7 @@ const Nav = () => {
               <Button
                 variant={"ghost"}
                 color={"blue.400"}
-                px={[8]}
+                px={[4, null, null, 8]}
                 py={[6]}
                 borderRadius={8}
                 mr="2"
@@ -80,7 +82,7 @@ const Nav = () => {
                 backgroundColor={"blue.400"}
                 color={"white"}
                 borderRadius={8}
-                px={[8]}
+                px={[4, null, null, 8]}
                 py={[6]}
                 boxShadow={"0px 0px 40px rgba(66, 153, 225, 0.4);"}
                 onClick={() => {
@@ -91,26 +93,42 @@ const Nav = () => {
                 Register
               </Button>
             </>
-          ) : width < 768 ? (
-            <Menu>
-              <MenuButton
-                as={IconButton}
-                aria-label="Options"
-                icon={<HamburgerIcon />}
-                variant="outline"
-              />
-              <MenuList>
-                <MenuItem>
-                  <Button onClick={handleLogout}>Logout</Button>
-                </MenuItem>
-              </MenuList>
-            </Menu>
           ) : (
+            // width < 768 ? (
+            //   <Menu>
+            //     <MenuButton
+            //       as={IconButton}
+            //       aria-label="Options"
+            //       icon={<HamburgerIcon />}
+            //       variant="outline"
+            //     />
+            //     <MenuList>
+            //       <MenuItem>
+            //         <Button onClick={handleLogout}>Logout</Button>
+            //       </MenuItem>
+            //     </MenuList>
+            //   </Menu>
+            // ) :
             <Menu>
               <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
                 {user && `Hi ${user.username}`}
               </MenuButton>
               <MenuList>
+                {/* If on mobile, show routes */}
+                {width < 768 && (
+                  <>
+                    <MenuItem>
+                      <Link to="/">All jobs</Link>
+                    </MenuItem>
+                    <MenuItem>
+                      <Link to="/profile">My profile</Link>
+                    </MenuItem>
+                    <MenuItem>
+                      <Link to="/applications">My applications</Link>
+                    </MenuItem>
+                  </>
+                )}
+
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
               </MenuList>
             </Menu>

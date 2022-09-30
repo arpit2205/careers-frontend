@@ -7,14 +7,22 @@ import {
   CheckboxGroup,
   Select,
   Button,
+  Alert,
+  Link,
 } from "@chakra-ui/react";
 
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { useJobs } from "../contexts/jobsContext";
+import { useProfile } from "../contexts/profileContext";
+
+import { fetchQuotes } from "../api/quotes";
+import unicorn from "../assets/unicorn.gif";
+import { BsLinkedin } from "react-icons/bs";
 
 const RightPanel = () => {
   const { jobs, setJobs, filteredJobs, setFilteredJobs } = useJobs();
+  const { profile } = useProfile();
 
   const [fetchedFilters, setFetchedFilters] = useState({
     location: [],
@@ -25,6 +33,8 @@ const RightPanel = () => {
     location: "All locations",
     category: [],
   });
+
+  const [quotes, setQuotes] = useState([]);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -71,11 +81,27 @@ const RightPanel = () => {
     setFetchedFilters((prev) => ({ ...prev, category: uniqueCategories }));
   }, [jobs]);
 
-  useEffect(() => {
-    console.log(filters);
-  }, [filters]);
+  const getQuotes = async () => {
+    try {
+      const data = await fetchQuotes();
+      console.log(data);
+      let tempQuotes = [];
+      for (let i = 0; i < 5; i++) {
+        tempQuotes.push(data[Math.floor(Math.random() * data.length)].text);
+      }
+      console.log(tempQuotes);
+      setQuotes(tempQuotes);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  return location.pathname === "/" || location.pathname.startsWith("/job/") ? (
+  useEffect(() => {
+    // fetch quotes
+    getQuotes();
+  }, [location]);
+
+  return (
     <Box
       w={[0, 0, "30%"]}
       h={["fit-content"]}
@@ -88,98 +114,145 @@ const RightPanel = () => {
       // borderColor="gray.100"
       borderRadius={8}
     >
-      <Heading color={"gray.600"} fontSize={["lg", null, null, "3xl"]}>
-        Filter jobs
-      </Heading>
+      {location.pathname === "/" || location.pathname.startsWith("/job/") ? (
+        <>
+          <Heading color={"gray.600"} fontSize={["lg", null, null, "3xl"]}>
+            Filter jobs
+          </Heading>
 
-      {/* checkboxes */}
-      <Box>
-        <Text color={"gray.500"} fontWeight={"bold"} mt={[10]} mb={[2]}>
-          Category
-        </Text>
-        <Box>
-          <CheckboxGroup colorScheme="pink">
-            {fetchedFilters.category.map((category, index) => (
-              <Checkbox
-                isChecked={filters.category.includes(category)}
+          {/* checkboxes */}
+          <Box>
+            <Text color={"gray.500"} fontWeight={"bold"} mt={[10]} mb={[2]}>
+              Category
+            </Text>
+            <Box>
+              <CheckboxGroup colorScheme="pink">
+                {fetchedFilters.category.map((category, index) => (
+                  <Checkbox
+                    isChecked={filters.category.includes(category)}
+                    onChange={(e) => {
+                      const newFilters = { ...filters };
+                      if (e.target.checked) {
+                        newFilters.category.push(category);
+                      } else {
+                        newFilters.category = newFilters.category.filter(
+                          (item) => item !== category
+                        );
+                      }
+                      setFilters(newFilters);
+                    }}
+                    mr={[6]}
+                    mt={[2]}
+                    color={"gray.500"}
+                  >
+                    {category}
+                  </Checkbox>
+                ))}
+              </CheckboxGroup>
+            </Box>
+          </Box>
+
+          <Box>
+            <Text color={"gray.500"} fontWeight={"bold"} mt={[10]} mb={[2]}>
+              Location
+            </Text>
+            <Box>
+              <Select
+                placeholder="Select location"
+                color={"gray.500"}
                 onChange={(e) => {
                   const newFilters = { ...filters };
-                  if (e.target.checked) {
-                    newFilters.category.push(category);
-                  } else {
-                    newFilters.category = newFilters.category.filter(
-                      (item) => item !== category
-                    );
-                  }
+                  newFilters.location = e.target.value;
                   setFilters(newFilters);
                 }}
-                mr={[6]}
-                mt={[2]}
-                color={"gray.500"}
+                value={filters.location}
               >
-                {category}
-              </Checkbox>
-            ))}
-          </CheckboxGroup>
-        </Box>
-      </Box>
+                {fetchedFilters.location.map((location) => (
+                  <option value={location}>{location}</option>
+                ))}
+              </Select>
+            </Box>
+          </Box>
 
-      <Box>
-        <Text color={"gray.500"} fontWeight={"bold"} mt={[10]} mb={[2]}>
-          Location
-        </Text>
-        <Box>
-          <Select
-            placeholder="Select location"
-            color={"gray.500"}
-            onChange={(e) => {
-              const newFilters = { ...filters };
-              newFilters.location = e.target.value;
-              setFilters(newFilters);
-            }}
-            value={filters.location}
+          <Box mt={[6]} d="flex" justifyContent={"flex-end"}>
+            <Button
+              variant={"ghost"}
+              color={"pink.400"}
+              px={[8]}
+              py={[6]}
+              mr={[2]}
+              onClick={handleClearFilters}
+              isDisabled={
+                filters.category.length === 0 &&
+                filters.location === "All locations"
+              }
+            >
+              Clear
+            </Button>
+            <Button
+              variant={"solid"}
+              backgroundColor={"pink.400"}
+              color={"white"}
+              px={[8]}
+              py={[6]}
+              boxShadow={"0px 8px 40px rgba(237, 100, 166, 0.4)"}
+              onClick={handleApplyFilters}
+              isDisabled={
+                filters.category.length === 0 &&
+                filters.location === "All locations"
+              }
+            >
+              Apply
+            </Button>
+          </Box>
+        </>
+      ) : (
+        <Box d="flex" flexDirection={"column"} justifyContent={"center"}>
+          {profile && profile.linkedinURL && (
+            <Button
+              py={[8]}
+              mb={[8]}
+              color={"#0072b1"}
+              onClick={() => {
+                window.open(profile.linkedinURL, "_blank");
+              }}
+              leftIcon={<BsLinkedin />}
+            >
+              My Linkedin Profile
+            </Button>
+          )}
+
+          <Heading
+            d="flex"
+            alignItems={"center"}
+            color={"pink.500"}
+            fontSize={["xl"]}
           >
-            {fetchedFilters.location.map((location) => (
-              <option value={location}>{location}</option>
-            ))}
-          </Select>
-        </Box>
-      </Box>
+            {" "}
+            Go Slow{" "}
+            <img
+              src={unicorn}
+              width={"40px"}
+              style={{
+                transform: " translate(4px, -4px)",
+              }}
+            />
+          </Heading>
 
-      <Box mt={[6]} d="flex" justifyContent={"flex-end"}>
-        <Button
-          variant={"ghost"}
-          color={"pink.400"}
-          px={[8]}
-          py={[6]}
-          mr={[2]}
-          onClick={handleClearFilters}
-          isDisabled={
-            filters.category.length === 0 &&
-            filters.location === "All locations"
-          }
-        >
-          Clear
-        </Button>
-        <Button
-          variant={"solid"}
-          backgroundColor={"pink.400"}
-          color={"white"}
-          px={[8]}
-          py={[6]}
-          boxShadow={"0px 8px 40px rgba(237, 100, 166, 0.4)"}
-          onClick={handleApplyFilters}
-          isDisabled={
-            filters.category.length === 0 &&
-            filters.location === "All locations"
-          }
-        >
-          Apply
-        </Button>
-      </Box>
+          {quotes.map((quote, index) => (
+            <Alert
+              status="info"
+              mb="4"
+              borderRadius="8"
+              bgColor={`${index % 2 ? "blue.50" : "pink.50"}`}
+              color={`${index % 2 ? "blue.600" : "pink.600"}`}
+            >
+              {quote}
+            </Alert>
+          ))}
+        </Box>
+      )}
     </Box>
-  ) : (
-    ""
   );
 };
 
