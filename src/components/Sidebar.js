@@ -104,7 +104,7 @@ const Sidebar = () => {
           >
             To use this application as a user, please register or login.
           </Alert>
-          <Alert
+          {/* <Alert
             status="warning"
             borderRadius="8"
             bgColor={"orange.50"}
@@ -113,7 +113,7 @@ const Sidebar = () => {
             To use this application as an admin, please login using the
             following credentials: <br />
             <br /> Username: admin <br /> Password: admin123
-          </Alert>
+          </Alert> */}
         </>
       )}
     </Box>
