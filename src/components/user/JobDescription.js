@@ -194,8 +194,12 @@ const JobDescription = () => {
               </Box>
 
               <Box d="flex" flexDirection={"column"}>
-                <Text color={"gray.300"}>DURATION</Text>
-                <Text color={"gray.500"} fontWeight={"bold"}>
+                <Text color={"gray.300"}>EXPERIENCE</Text>
+                <Text
+                  color={"gray.500"}
+                  fontWeight={"bold"}
+                  textAlign={"right"}
+                >
                   {selectedJob?.duration}
                 </Text>
               </Box>
