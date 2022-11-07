@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Box, Heading, Tab, Tabs, TabList, Alert } from "@chakra-ui/react";
 
 import { useAuth } from "../contexts/authContext";
 import { useUtil } from "../contexts/utilContext";
 
 const Sidebar = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const { tabIndex, setTabIndex } = useUtil();
+  const navigate = useNavigate();
   const activeStyle = {
     color: "white",
     bg: "pink.400",
@@ -15,15 +16,25 @@ const Sidebar = () => {
   };
 
   useEffect(() => {
-    if (window.location.pathname === "/") {
+    if (
+      window.location.pathname === "/" ||
+      window.location.pathname === "/admin" ||
+      window.location.pathname === "/admin/post-job" ||
+      window.location.pathname.includes("/admin/job/") ||
+      window.location.pathname.includes("/job/")
+    ) {
       setTabIndex(0);
     }
 
-    if (window.location.pathname === "/applications") {
+    if (window.location.pathname.includes("applications")) {
       setTabIndex(1);
     }
 
     if (window.location.pathname === "/profile") {
+      setTabIndex(2);
+    }
+
+    if (window.location.pathname === "/admin/logs") {
       setTabIndex(2);
     }
   }, [tabIndex]);
@@ -40,59 +51,123 @@ const Sidebar = () => {
       borderRadius={8}
     >
       {isAuthenticated ? (
-        <Box w="100%">
-          <Tabs
-            variant="unstyled"
-            defaultIndex={0}
-            index={tabIndex}
-            onChange={(index) => {
-              setTabIndex(index);
-            }}
-          >
-            <TabList
-              d="flex"
-              justifyContent={"flex-start"}
-              flexDirection={"column"}
+        user?.isAdmin === false ? (
+          // user
+          <Box w="100%">
+            <Tabs
+              variant="unstyled"
+              defaultIndex={0}
+              index={tabIndex}
+              onChange={(index) => {
+                setTabIndex(index);
+              }}
             >
-              <Tab
+              <TabList
                 d="flex"
                 justifyContent={"flex-start"}
-                borderRadius={8}
-                fontWeight={"bold"}
-                color={"gray.600"}
-                py={[4]}
-                px={[8]}
-                _selected={activeStyle}
+                flexDirection={"column"}
               >
-                <Link to="/">All jobs</Link>
-              </Tab>
-              <Tab
+                <Tab
+                  d="flex"
+                  justifyContent={"flex-start"}
+                  borderRadius={8}
+                  fontWeight={"bold"}
+                  color={"gray.600"}
+                  py={[4]}
+                  px={[8]}
+                  _selected={activeStyle}
+                  onClick={() => navigate("/")}
+                >
+                  <Link to="/">All jobs</Link>
+                </Tab>
+                <Tab
+                  d="flex"
+                  justifyContent={"flex-start"}
+                  borderRadius={8}
+                  fontWeight={"bold"}
+                  color={"gray.600"}
+                  py={[4]}
+                  px={[8]}
+                  _selected={activeStyle}
+                  onClick={() => navigate("/applications")}
+                >
+                  <Link to="/applications">My applications</Link>
+                </Tab>
+                <Tab
+                  d="flex"
+                  justifyContent={"flex-start"}
+                  borderRadius={8}
+                  fontWeight={"bold"}
+                  color={"gray.600"}
+                  py={[4]}
+                  px={[8]}
+                  _selected={activeStyle}
+                  onClick={() => navigate("/profile")}
+                >
+                  <Link to="/profile">My profile</Link>
+                </Tab>
+              </TabList>
+            </Tabs>
+          </Box>
+        ) : (
+          // admin
+          <Box w="100%">
+            <Tabs
+              variant="unstyled"
+              defaultIndex={0}
+              index={tabIndex}
+              onChange={(index) => {
+                setTabIndex(index);
+              }}
+            >
+              <TabList
                 d="flex"
                 justifyContent={"flex-start"}
-                borderRadius={8}
-                fontWeight={"bold"}
-                color={"gray.600"}
-                py={[4]}
-                px={[8]}
-                _selected={activeStyle}
+                flexDirection={"column"}
               >
-                <Link to="/applications">My applications</Link>
-              </Tab>
-              <Tab
-                d="flex"
-                justifyContent={"flex-start"}
-                borderRadius={8}
-                fontWeight={"bold"}
-                color={"gray.600"}
-                py={[4]}
-                px={[8]}
-                _selected={activeStyle}
-              >
-                <Link to="/profile">My profile</Link>
-              </Tab>
-            </TabList>
-          </Tabs>
-        </Box>
+                <Tab
+                  d="flex"
+                  justifyContent={"flex-start"}
+                  borderRadius={8}
+                  fontWeight={"bold"}
+                  color={"gray.600"}
+                  py={[4]}
+                  px={[8]}
+                  _selected={activeStyle}
+                  onClick={() => navigate("/admin")}
+                >
+                  <Link to="/admin">Jobs</Link>
+                </Tab>
+                <Tab
+                  d="flex"
+                  justifyContent={"flex-start"}
+                  borderRadius={8}
+                  fontWeight={"bold"}
+                  color={"gray.600"}
+                  py={[4]}
+                  px={[8]}
+                  _selected={activeStyle}
+                  onClick={() => navigate("/admin/applications")}
+                >
+                  <Link to="/admin/applications">Applications</Link>
+                </Tab>
+                <Tab
+                  d="flex"
+                  justifyContent={"flex-start"}
+                  borderRadius={8}
+                  fontWeight={"bold"}
+                  color={"gray.600"}
+                  py={[4]}
+                  px={[8]}
+                  _selected={activeStyle}
+                  onClick={() => navigate("/admin/logs")}
+                >
+                  <Link to="/admin/logs">Logs</Link>
+                </Tab>
+              </TabList>
+            </Tabs>
+          </Box>
+        )
       ) : (
         <>
           <Alert

@@ -3,7 +3,7 @@ export const ToastConfig = (title, description, status) => {
     title,
     description,
     status,
-    duration: 4000,
+    duration: 5000,
     isClosable: true,
   };
 };

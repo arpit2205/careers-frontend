@@ -21,7 +21,7 @@ import { useProfile } from "../contexts/profileContext";
 
 import jwt_decode from "jwt-decode";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Nav = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -30,12 +30,18 @@ const Nav = () => {
   const { isAuthenticated, setIsAuthenticated, user, setUser } = useAuth();
   const { profile, setProfile } = useProfile();
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (window.localStorage.getItem("jwt-token")) {
       const token = window.localStorage.getItem("jwt-token");
       const decoded = jwt_decode(token);
       setUser(decoded);
       setIsAuthenticated(true);
+
+      if (decoded.isAdmin === true) {
+        navigate("/admin");
+      }
     }
   }, []);
 
@@ -46,6 +52,8 @@ const Nav = () => {
 
     //remove token from local storage
     window.localStorage.removeItem("jwt-token");
+
+    navigate("/");
   };
 
   // Setting current screen width to state in real time
@@ -66,7 +74,7 @@ const Nav = () => {
             <>
               <Button
                 variant={"ghost"}
-                color={"blue.400"}
+                colorScheme={"blue"}
                 px={[4, null, null, 8]}
                 py={[6]}
                 borderRadius={8}
@@ -79,8 +87,8 @@ const Nav = () => {
                 Login
               </Button>
               <Button
-                backgroundColor={"blue.400"}
-                color={"white"}
+                variant={"solid"}
+                colorScheme={"blue"}
                 borderRadius={8}
                 px={[4, null, null, 8]}
                 py={[6]}
@@ -94,40 +102,38 @@ const Nav = () => {
               </Button>
             </>
           ) : (
-            // width < 768 ? (
-            //   <Menu>
-            //     <MenuButton
-            //       as={IconButton}
-            //       aria-label="Options"
-            //       icon={<HamburgerIcon />}
-            //       variant="outline"
-            //     />
-            //     <MenuList>
-            //       <MenuItem>
-            //         <Button onClick={handleLogout}>Logout</Button>
-            //       </MenuItem>
-            //     </MenuList>
-            //   </Menu>
-            // ) :
             <Menu>
               <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
                 {user && `Hi ${user.username}`}
               </MenuButton>
               <MenuList>
-                {/* If on mobile, show routes */}
-                {width < 768 && (
-                  <>
-                    <MenuItem>
-                      <Link to="/">All jobs</Link>
-                    </MenuItem>
-                    <MenuItem>
-                      <Link to="/profile">My profile</Link>
-                    </MenuItem>
-                    <MenuItem>
-                      <Link to="/applications">My applications</Link>
-                    </MenuItem>
-                  </>
-                )}
+                {width < 768 ? (
+                  user?.isAdmin === true ? (
+                    <>
+                      <MenuItem>
+                        <Link to="/admin">Jobs</Link>
+                      </MenuItem>
+                      <MenuItem>
+                        <Link to="/admin/applications">Applications</Link>
+                      </MenuItem>
+                      <MenuItem>
+                        <Link to="/admin/logs">Logs</Link>
+                      </MenuItem>
+                    </>
+                  ) : (
+                    <>
+                      <MenuItem>
+                        <Link to="/">All jobs</Link>
+                      </MenuItem>
+                      <MenuItem>
+                        <Link to="/profile">My profile</Link>
+                      </MenuItem>
+                      <MenuItem>
+                        <Link to="/applications">My applications</Link>
+                      </MenuItem>
+                    </>
+                  )
+                ) : null}
 
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
               </MenuList>

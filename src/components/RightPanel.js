@@ -10,11 +10,13 @@ import {
   Alert,
   Link,
 } from "@chakra-ui/react";
+import { ArrowRightIcon } from "@chakra-ui/icons";
 
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { useJobs } from "../contexts/jobsContext";
 import { useProfile } from "../contexts/profileContext";
+import { useAuth } from "../contexts/authContext";
 
 import { fetchQuotes } from "../api/quotes";
 import unicorn from "../assets/unicorn.gif";
@@ -23,6 +25,7 @@ import { BsLinkedin } from "react-icons/bs";
 const RightPanel = () => {
   const { jobs, setJobs, filteredJobs, setFilteredJobs } = useJobs();
   const { profile } = useProfile();
+  const { isAuthenticated, user } = useAuth();
 
   const [fetchedFilters, setFetchedFilters] = useState({
     location: [],
@@ -86,7 +89,7 @@ const RightPanel = () => {
       const data = await fetchQuotes();
       console.log(data);
       let tempQuotes = [];
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 3; i++) {
         tempQuotes.push(data[Math.floor(Math.random() * data.length)].text);
       }
       console.log(tempQuotes);
@@ -177,7 +180,7 @@ const RightPanel = () => {
           <Box mt={[6]} d="flex" justifyContent={"flex-end"}>
             <Button
               variant={"ghost"}
-              color={"pink.400"}
+              colorScheme={"pink"}
               px={[8]}
               py={[6]}
               mr={[2]}
@@ -191,8 +194,7 @@ const RightPanel = () => {
             </Button>
             <Button
               variant={"solid"}
-              backgroundColor={"pink.400"}
-              color={"white"}
+              colorScheme={"pink"}
               px={[8]}
               py={[6]}
               boxShadow={"0px 8px 40px rgba(237, 100, 166, 0.4)"}
@@ -206,7 +208,7 @@ const RightPanel = () => {
             </Button>
           </Box>
         </>
-      ) : (
+      ) : user && user.isAdmin === false ? (
         <Box d="flex" flexDirection={"column"} justifyContent={"center"}>
           {profile && profile.linkedinURL && (
             <Button
@@ -251,7 +253,23 @@ const RightPanel = () => {
             </Alert>
           ))}
         </Box>
-      )}
+      ) : user && user.isAdmin ? (
+        <Box d="flex" flexDirection={"column"} justifyContent={"center"}>
+          <Button
+            py={[8]}
+            mb={[8]}
+            colorScheme={"blue"}
+            variant={"solid"}
+            boxShadow={"0px 0px 40px rgba(66, 153, 225, 0.4);"}
+            onClick={() => {
+              navigate("/admin/post-job");
+            }}
+            rightIcon={<ArrowRightIcon />}
+          >
+            Post new job
+          </Button>
+        </Box>
+      ) : null}
     </Box>
   );
 };

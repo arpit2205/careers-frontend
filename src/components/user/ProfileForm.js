@@ -255,7 +255,7 @@ const ProfileForm = () => {
                     Start date
                   </Text>
                   <Input
-                    color={"gray.400"}
+                    color={"gray.500"}
                     type={"date"}
                     value={inputField.startDate}
                     name="startDate"
@@ -270,7 +270,7 @@ const ProfileForm = () => {
                     End date
                   </Text>
                   <Input
-                    color={"gray.400"}
+                    color={"gray.500"}
                     type={"date"}
                     value={inputField.endDate}
                     name="endDate"
@@ -364,7 +364,7 @@ const ProfileForm = () => {
                 Date of completion
               </Text>
               <Input
-                color={"gray.400"}
+                color={"gray.500"}
                 type={"date"}
                 value={dateOfCompletion}
                 onChange={(e) => setDateOfCompletion(e.target.value)}
@@ -416,8 +416,8 @@ const ProfileForm = () => {
         <Button
           w="100%"
           mt={[2]}
-          backgroundColor={"blue.400"}
-          color={"white"}
+          variant={"solid"}
+          colorScheme={"blue"}
           py={[10]}
           boxShadow={"0px 0px 40px rgba(66, 153, 225, 0.5)"}
           onClick={handleCreateProfile}

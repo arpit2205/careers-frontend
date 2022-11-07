@@ -29,6 +29,7 @@ import { useNavigate } from "react-router-dom";
 const AuthModal = ({ isOpen, onClose, type }) => {
   const [modalType, setModalType] = useState(type);
   const [showPassword, setShowPassword] = useState(false);
+  const [btnLoading, setBtnLoading] = useState(false);
   const handleClick = () => setShowPassword(!showPassword);
 
   const [username, setUsername] = useState("");
@@ -48,6 +49,7 @@ const AuthModal = ({ isOpen, onClose, type }) => {
     e.preventDefault();
     if (modalType === "register") {
       try {
+        setBtnLoading(true);
         const data = await register(username, password);
         console.log(data);
         toast(
@@ -74,6 +76,7 @@ const AuthModal = ({ isOpen, onClose, type }) => {
       }
     } else if (modalType === "login") {
       try {
+        setBtnLoading(true);
         const data = await login(username, password);
         console.log(data);
 
@@ -91,8 +94,16 @@ const AuthModal = ({ isOpen, onClose, type }) => {
         toast(ToastConfig("Login successful", "Welcome back!", "success"));
 
         // change sidebar tab index
-        setTabIndex(2);
-        navigate("/profile");
+        if (decoded.isAdmin === false) {
+          setTabIndex(2);
+          navigate("/profile");
+        }
+
+        if (decoded.isAdmin === true) {
+          setTabIndex(0);
+          navigate("/admin");
+          toast(ToastConfig("Admin Login Detected", "👽👽👽", "info"));
+        }
 
         onClose();
         setUsername("");
@@ -110,6 +121,7 @@ const AuthModal = ({ isOpen, onClose, type }) => {
         );
       }
     }
+    setBtnLoading(false);
   };
 
   return (
@@ -207,10 +219,11 @@ const AuthModal = ({ isOpen, onClose, type }) => {
                 type="submit"
                 mt={[4]}
                 w="100%"
-                backgroundColor={"blue.400"}
-                color={"white"}
+                variant={"solid"}
+                colorScheme={"blue"}
                 py={[6]}
                 boxShadow={"0px 10px 40px rgba(66, 153, 225, 0.4)"}
+                isLoading={btnLoading}
               >
                 {modalType === "register" ? "Create an account" : "Login"}
               </Button>

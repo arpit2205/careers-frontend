@@ -75,8 +75,8 @@ const AuthForm = ({ type }) => {
           type="submit"
           mt={[4]}
           w="100%"
-          backgroundColor={"blue.400"}
-          color={"white"}
+          variant={"solid"}
+          colorScheme={"blue"}
           py={[6]}
           boxShadow={"0px 10px 40px rgba(66, 153, 225, 0.4)"}
         >

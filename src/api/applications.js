@@ -27,3 +27,68 @@ export const getMyApplications = async () => {
   );
   return response.data;
 };
+
+// ADMIN ROUTES
+
+// get all applications
+export const getAllApplicationsAdmin = async () => {
+  const response = await axiosInstance.get(
+    "/api/admin/application/all-applications",
+    {
+      headers: {
+        Authorization: getAuthorizationHeader(),
+      },
+    }
+  );
+  return response.data;
+};
+
+// get applications for a job
+export const getApplicationsForJobAdmin = async (jobId) => {
+  const response = await axiosInstance.get(
+    `/api/admin/application/job/${jobId}`,
+    {
+      headers: {
+        Authorization: getAuthorizationHeader(),
+      },
+    }
+  );
+  return response.data;
+};
+
+// get single application
+export const getSingleApplicationAdmin = async (applicationId) => {
+  const response = await axiosInstance.get(
+    `/api/admin/application/${applicationId}`,
+    {
+      headers: {
+        Authorization: getAuthorizationHeader(),
+      },
+    }
+  );
+  return response.data;
+};
+
+// get admin logs
+export const getLogsAdmin = async () => {
+  const response = await axiosInstance.get("/api/admin/application/logs", {
+    headers: {
+      Authorization: getAuthorizationHeader(),
+    },
+  });
+  return response.data;
+};
+
+// select/reject an application
+export const selectOrRejectApplicationAdmin = async (applicationId, data) => {
+  const response = await axiosInstance.patch(
+    `/api/admin/application/${applicationId}`,
+    data,
+    {
+      headers: {
+        Authorization: getAuthorizationHeader(),
+      },
+    }
+  );
+  return response.data;
+};

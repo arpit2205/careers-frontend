@@ -17,6 +17,7 @@ import {
 import { Link } from "react-router-dom";
 
 import { getMyApplications } from "../../api/applications";
+import { useJobs } from "../../contexts/jobsContext";
 
 import { ToastConfig } from "../ToastConfig";
 
@@ -25,6 +26,8 @@ import eyes from "../../assets/eyes.gif";
 const MyApplications = () => {
   const [loading, setLoading] = useState(false);
   const [applications, setApplications] = useState([]);
+
+  const { selectedJob, setSelectedJob } = useJobs();
 
   const toast = useToast();
 
@@ -51,6 +54,7 @@ const MyApplications = () => {
 
   useEffect(() => {
     fetchMyApplications();
+    setSelectedJob(null);
     window.scrollTo(0, 0);
   }, []);
 

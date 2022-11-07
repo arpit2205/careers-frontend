@@ -12,19 +12,20 @@ import {
   Skeleton,
 } from "@chakra-ui/react";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { SearchIcon } from "@chakra-ui/icons";
 
-import { getAllJobs } from "../../api/jobs";
+import { getAllJobsAdmin } from "../../api/jobs";
 
 import { ToastConfig } from "../ToastConfig";
 
 import { useJobs } from "../../contexts/jobsContext";
+import { useUtil } from "../../contexts/utilContext";
 
 import eyes from "../../assets/eyes.gif";
 
-const AllJobs = () => {
+const AllJobsAdmin = () => {
   const {
     jobs,
     setJobs,
@@ -33,14 +34,16 @@ const AllJobs = () => {
     selectedJob,
     setSelectedJob,
   } = useJobs();
+  const { tabIndex, setTabIndex } = useUtil();
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const toast = useToast();
 
   const fetchAllJobs = async () => {
     try {
       setLoading(true);
-      const data = await getAllJobs();
+      const data = await getAllJobsAdmin();
       setJobs(data.data);
       setFilteredJobs(data.data);
       console.log(data);
@@ -60,10 +63,8 @@ const AllJobs = () => {
   };
 
   useEffect(() => {
-    if (jobs.length === 0) {
-      fetchAllJobs();
-    }
-    setSelectedJob(null);
+    fetchAllJobs();
+    setTabIndex(0);
     window.scrollTo(0, 0);
   }, []);
 
@@ -88,7 +89,7 @@ const AllJobs = () => {
       borderRadius={8}
     >
       <Heading color={"gray.600"} fontSize={["2xl", null, null, "3xl"]}>
-        Current openings
+        Active jobs
       </Heading>
 
       {/* Seacrh bar */}
@@ -104,7 +105,7 @@ const AllJobs = () => {
             type="text"
             variant={"filled"}
             backgroundColor={"gray.50"}
-            placeholder="What kind of jobs are you looking for?"
+            placeholder="Search roles"
             height={"48px"}
             onChange={(e) => handleSearch(e)}
           />
@@ -149,9 +150,29 @@ const AllJobs = () => {
                     </Box>
                   </Box>
                   {/* actions */}
-                  <Box>
-                    <Button variant={"link"} color={"blue.400"} mt={[6]}>
-                      <Link to={`/job/${job._id}`}>View description</Link>
+                  <Box d="flex">
+                    <Button
+                      variant={"solid"}
+                      colorScheme={"blue"}
+                      mt={[8]}
+                      onClick={() => {
+                        setSelectedJob(job);
+                        navigate(`/admin/applications/job/${job._id}`);
+                      }}
+                    >
+                      View applications
+                    </Button>
+
+                    <Button
+                      variant={"outline"}
+                      color={"blue.400"}
+                      mt={[8]}
+                      ml={[3]}
+                      onClick={() => {
+                        navigate(`/admin/job/${job._id}`);
+                      }}
+                    >
+                      View & Manage job
                     </Button>
                   </Box>
                 </Box>
@@ -177,4 +198,4 @@ const AllJobs = () => {
   );
 };
 
-export default AllJobs;
+export default AllJobsAdmin;

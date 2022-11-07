@@ -13,29 +13,25 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 
-import { ChevronLeftIcon } from "@chakra-ui/icons";
+import {
+  ChevronLeftIcon,
+  DeleteIcon,
+  ChevronRightIcon,
+} from "@chakra-ui/icons";
 
 import { Link, useNavigate } from "react-router-dom";
 
 import { useJobs } from "../../contexts/jobsContext";
-import { useProfile } from "../../contexts/profileContext";
-import { useAuth } from "../../contexts/authContext";
 import { useUtil } from "../../contexts/utilContext";
-import { getSpecificJob } from "../../api/jobs";
-import { getMyProfile } from "../../api/profile";
-import { applyForJob } from "../../api/applications";
+import { getSpecificJobAdmin } from "../../api/jobs";
+import { deleteJobAdmin } from "../../api/jobs";
 import { ToastConfig } from "../ToastConfig";
 
-import AuthModal from "../AuthModal";
-
-import fire from "../../assets/fire.gif";
 import eyes from "../../assets/eyes.gif";
 
-const JobDescription = () => {
+const JobDescriptionAdmin = () => {
   const { selectedJob, setSelectedJob } = useJobs();
-  const { profile, setProfile } = useProfile();
-  const { isAuthenticated, user } = useAuth();
-  const jobId = window.location.pathname.split("/")[2];
+  const jobId = window.location.pathname.split("/")[3];
   const [loading, setLoading] = useState(false);
   const [btnLoading, setBtnLoading] = useState(false);
   const toast = useToast();
@@ -46,7 +42,7 @@ const JobDescription = () => {
   const fetchSpecificJob = async () => {
     try {
       setLoading(true);
-      const data = await getSpecificJob(jobId);
+      const data = await getSpecificJobAdmin(jobId);
       setSelectedJob(data.data);
       console.log(data);
     } catch (error) {
@@ -70,65 +66,26 @@ const JobDescription = () => {
     setTabIndex(0);
   }, []);
 
-  const handleApplyNow = async () => {
-    if (!isAuthenticated && user === null) {
-      toast(ToastConfig("Info", "Please login to apply for this job", "error"));
-      onOpen();
-      return;
-    }
-
-    if (isAuthenticated && profile === null) {
+  const handleDeleteJob = async () => {
+    try {
+      setBtnLoading(true);
+      const data = await deleteJobAdmin(jobId);
+      toast(ToastConfig("Success", "Job deleted successfully", "success"));
+      setSelectedJob(null);
+      navigate("/admin");
+    } catch (error) {
+      console.log(error.response ? error.response.data : { error });
       toast(
         ToastConfig(
-          "Info",
-          "Please complete your profile first to apply for jobs",
-          "info"
+          "Error",
+          error.response
+            ? error.response.data.message
+            : "Backend service unavailable",
+          "error"
         )
       );
-      setTabIndex(2);
-      navigate("/profile");
-      return;
     }
-
-    if (isAuthenticated && user && profile) {
-      // apply for job
-
-      const applicationData = {
-        job: {
-          id: selectedJob._id,
-          role: selectedJob.role,
-          location: selectedJob.location,
-        },
-        profile: profile,
-      };
-
-      try {
-        setBtnLoading(true);
-        const data = await applyForJob(applicationData);
-        toast(
-          ToastConfig(
-            "Success",
-            "Your application was sent for this job",
-            "success"
-          )
-        );
-        console.log(data);
-        navigate("/applications");
-        setTabIndex(1);
-      } catch (error) {
-        console.log(error.response ? error.response.data : { error });
-        toast(
-          ToastConfig(
-            "Error",
-            error.response
-              ? error.response.data.message
-              : "Backend service unavailable",
-            "error"
-          )
-        );
-      }
-      setBtnLoading(false);
-    }
+    setBtnLoading(false);
   };
 
   return (
@@ -141,7 +98,7 @@ const JobDescription = () => {
       // border={"1px solid #eeeeee"}
       borderRadius={8}
     >
-      <ChakraLink as={Link} to="/" color={"blue.400"} fontWeight={"bold"}>
+      <ChakraLink as={Link} to="/admin" color={"blue.400"} fontWeight={"bold"}>
         <ChevronLeftIcon /> Go back to all jobs
       </ChakraLink>
       <Skeleton isLoaded={!loading}>
@@ -242,23 +199,35 @@ const JobDescription = () => {
               </Box>
 
               {/* Apply button */}
-              <Button
-                w="100%"
-                mt={[10]}
-                colorScheme={"blue"}
-                py={[10]}
-                boxShadow={"0px 0px 40px rgba(66, 153, 225, 0.5)"}
-                onClick={handleApplyNow}
-                isLoading={btnLoading}
-                // fontSize={"18px"}
-              >
-                Apply now
-                {/* <img
-                  width={"32px"}
-                  src={fire}
-                  style={{ transform: "translate(4px,-4px)" }}
-                /> */}
-              </Button>
+
+              <Box display="flex" mt={[12]}>
+                <Button
+                  w="100%"
+                  variant={"ghost"}
+                  colorScheme={"red"}
+                  py={[8]}
+                  mr={[2]}
+                  isLoading={btnLoading}
+                  leftIcon={<DeleteIcon />}
+                  onClick={handleDeleteJob}
+                >
+                  Delete job
+                </Button>
+
+                <Button
+                  w="100%"
+                  colorScheme={"blue"}
+                  variant={"solid"}
+                  py={[8]}
+                  boxShadow={"0px 0px 40px rgba(66, 153, 225, 0.5)"}
+                  onClick={() => {
+                    navigate(`/admin/applications/job/${selectedJob?._id}`);
+                  }}
+                  rightIcon={<ChevronRightIcon />}
+                >
+                  View applications
+                </Button>
+              </Box>
             </Box>
           </Box>
         ) : (
@@ -276,9 +245,8 @@ const JobDescription = () => {
           </Box>
         )}
       </Skeleton>
-      <AuthModal isOpen={isOpen} onClose={onClose} type={"register"} />
     </Box>
   );
 };
 
-export default JobDescription;
+export default JobDescriptionAdmin;

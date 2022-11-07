@@ -39,6 +39,7 @@ const BaseLayout = () => {
           ) : isAuthenticated && user && user.isAdmin ? (
             <AdminRouter />
           ) : null}
+
           <RightPanel />
         </Box>
       </Box>
