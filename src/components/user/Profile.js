@@ -230,13 +230,20 @@ const Profile = () => {
                   SKILLS
                 </Text>
 
-                <Box d="flex" justifyContent={"flex-start"} w="100%" my={[4]}>
+                <Box
+                  d="flex"
+                  justifyContent={"flex-start"}
+                  w="100%"
+                  my={[4]}
+                  flexWrap={"wrap"}
+                >
                   {profile?.skills.map((skill, index) => (
                     <Tag
                       key={index}
                       variant={"outline"}
                       colorScheme={"blue"}
                       mr={[2]}
+                      mb={[2]}
                       size={"lg"}
                     >
                       {skill}
