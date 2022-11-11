@@ -92,6 +92,13 @@ const ApplicationAdmin = () => {
       message: feedback,
     };
 
+    // verify admin using admin tpin
+    const TPIN = window.prompt("Enter Admin TPIN to proceed 👽", "");
+    if (TPIN !== process.env.REACT_APP_ADMIN_TPIN) {
+      toast(ToastConfig("Error", "Invalid TPIN", "error"));
+      return;
+    }
+
     try {
       setSelectBtnLoading(true);
       const data = await selectOrRejectApplicationAdmin(id, applicationData);
@@ -126,6 +133,13 @@ const ApplicationAdmin = () => {
       status: "rejected",
       message: feedback,
     };
+
+    // verify admin using admin tpin
+    const TPIN = window.prompt("Enter Admin TPIN to proceed 👽", "");
+    if (TPIN !== process.env.REACT_APP_ADMIN_TPIN) {
+      toast(ToastConfig("Error", "Invalid TPIN", "error"));
+      return;
+    }
 
     try {
       setRejectBtnLoading(true);

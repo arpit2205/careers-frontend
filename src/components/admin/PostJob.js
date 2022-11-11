@@ -109,6 +109,13 @@ const PostJob = () => {
       },
     };
 
+    // verify admin using admin tpin
+    const TPIN = window.prompt("Enter Admin TPIN to proceed 👽", "");
+    if (TPIN !== process.env.REACT_APP_ADMIN_TPIN) {
+      toast(ToastConfig("Error", "Invalid TPIN", "error"));
+      return;
+    }
+
     try {
       setBtnLoading(true);
       const data = await postJobAdmin(jobData);
