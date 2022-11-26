@@ -1,5 +1,5 @@
 # Full Stack Hiring Portal
-A full-fledged hiring portal, that can be used by an organisation to post & manage vacancies and shortlist genuine candidates. 
+A full-fledged hiring portal, that can be used by an organisation to post & manage vacancies and shortlist genuine candidates with a clean, beautiful user interface and a hassle-free user experience.
 
 - Frontend - https://github.com/arpit2205/careers-frontend
 - Backend - https://github.com/arpit2205/careers-backend
@@ -33,5 +33,9 @@ This aplication has 2 access levels:
 - Clone repo
 - Run ```npm install```
 - Run ```npm start```
+
+## Future scope
+- Implement a machine learning based algorithm to recommend jobs based on user profiles
+- Implement a machine learning based algorithm to produce vital stats for the admin panel
   
 
