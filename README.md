@@ -1,8 +1,8 @@
 # Full Stack Hiring Portal
 A full-fledged hiring portal, that can be used by an organisation to post & manage vacancies and shortlist genuine candidates. 
 
-Frontend - https://github.com/arpit2205/careers-frontend
-Backend - https://github.com/arpit2205/careers-backend
+- Frontend - https://github.com/arpit2205/careers-frontend
+- Backend - https://github.com/arpit2205/careers-backend
 
 ## Live preview
 https://careers-frontend.vercel.app/
