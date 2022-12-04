@@ -11,7 +11,7 @@ export const getToken = () => {
 export const getAuthorizationHeader = () => `Bearer ${getToken()}`;
 
 const axiosInstance = axios.create({
-  baseURL: "https://careers-backend.herokuapp.com/",
+  baseURL: "https://proud-red-kit.cyclic.app/",
   headers: {
     Authorization: getAuthorizationHeader(),
   },
