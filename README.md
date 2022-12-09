@@ -15,6 +15,7 @@ This aplication has 2 access levels:
   - View, filter applications based on job profiles/statuses
   - Easily shortlist/reject candidates (Email notification support coming soon)
   - View admin activity logs and necessary stats
+  - Send automated emails to applicants for application status updates (Applied/Selected/Rejected)
   
 ### 2. User (Job seeker)
   - View, search and filter active jobs based on category and location
