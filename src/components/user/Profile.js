@@ -132,6 +132,28 @@ const Profile = () => {
 
               <Box w={"100%"} mt={[10]}>
                 <Text color={"blue.500"} fontWeight={"bold"}>
+                  CONTACT
+                </Text>
+
+                <Box d="flex" justifyContent={"flex-start"} w="100%" my={[4]}>
+                  <Box d="flex" flexDirection={"column"} w="50%">
+                    <Text color={"gray.300"}>EMAIL ADDRESS</Text>
+                    <Text color={"gray.500"} fontWeight={"bold"}>
+                      {profile?.contact?.email}
+                    </Text>
+                  </Box>
+
+                  <Box d="flex" flexDirection={"column"} w="50%">
+                    <Text color={"gray.300"}>PHONE NUMBER</Text>
+                    <Text color={"gray.500"} fontWeight={"bold"}>
+                      {profile?.contact?.phone}
+                    </Text>
+                  </Box>
+                </Box>
+              </Box>
+
+              <Box w={"100%"} mt={[10]}>
+                <Text color={"blue.500"} fontWeight={"bold"}>
                   EXPERIENCE
                 </Text>
 

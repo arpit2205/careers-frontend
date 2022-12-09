@@ -17,6 +17,8 @@ import { createMyProfile } from "../../api/profile";
 import { useProfile } from "../../contexts/profileContext";
 import { useUtil } from "../../contexts/utilContext";
 
+import validator from "validator";
+
 const ProfileForm = () => {
   const [experienceInputFields, setExperienceInputFields] = useState([
     {
@@ -34,6 +36,8 @@ const ProfileForm = () => {
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
 
   const [university, setUniversity] = useState("");
   const [degree, setDegree] = useState("");
@@ -91,7 +95,9 @@ const ProfileForm = () => {
       majors === "" ||
       dateOfCompletion === "" ||
       skills === "" ||
-      linkedinURL === ""
+      linkedinURL === "" ||
+      email === "" ||
+      phone === ""
     ) {
       toast(ToastConfig("Error", "All fields are required", "error"));
       return;
@@ -109,6 +115,26 @@ const ProfileForm = () => {
         toast(ToastConfig("Error", "All fields are required", "error"));
         return;
       }
+    }
+
+    // email validation
+    if (!validator.isEmail(email)) {
+      toast(
+        ToastConfig("Invalid Email", "Please enter a valid email", "error")
+      );
+      return;
+    }
+
+    // phone validation
+    if (phone.length !== 10 || !validator.isNumeric(phone)) {
+      toast(
+        ToastConfig(
+          "Invalid Phone Number",
+          "Please enter a valid 10 digit mobile number",
+          "error"
+        )
+      );
+      return;
     }
 
     //linkedin url validation
@@ -143,6 +169,11 @@ const ProfileForm = () => {
       experience: experienceInputFields,
 
       linkedinURL,
+
+      contact: {
+        email: email,
+        phone: phone,
+      },
     };
 
     try {
@@ -201,6 +232,37 @@ const ProfileForm = () => {
               <Input
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
+              />
+            </Box>
+          </Box>
+        </Box>
+
+        {/*  */}
+        <Box w={"100%"} mt={[10]}>
+          <Text color={"blue.500"} fontWeight={"bold"}>
+            CONTACT
+          </Text>
+
+          <Box d="flex" justifyContent={"space-between"} w="100%" my={[4]}>
+            <Box d="flex" flexDirection={"column"} w="49%">
+              <Text color={"gray.400"} mb={[1]}>
+                Email address
+              </Text>
+              <Input value={email} onChange={(e) => setEmail(e.target.value)} />
+              <Text mt={[2]} fontSize={"sm"} color={"blue.400"}>
+                Automatic application status updates will be sent to this email
+                address.
+              </Text>
+            </Box>
+
+            <Box d="flex" flexDirection={"column"} w="49%">
+              <Text color={"gray.400"} mb={[1]}>
+                Phone number
+              </Text>
+              <Input
+                value={phone}
+                type="number"
+                onChange={(e) => setPhone(e.target.value)}
               />
             </Box>
           </Box>

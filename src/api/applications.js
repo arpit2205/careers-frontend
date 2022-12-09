@@ -28,6 +28,20 @@ export const getMyApplications = async () => {
   return response.data;
 };
 
+// email applicant on applying for a job
+export const sendEmailToApplicantUser = async (applicationId, data) => {
+  const response = await axiosInstance.post(
+    `/api/user/application/email/${applicationId}`,
+    data,
+    {
+      headers: {
+        Authorization: getAuthorizationHeader(),
+      },
+    }
+  );
+  return response.data;
+};
+
 // ADMIN ROUTES
 
 // get all applications
@@ -83,6 +97,20 @@ export const getLogsAdmin = async () => {
 export const selectOrRejectApplicationAdmin = async (applicationId, data) => {
   const response = await axiosInstance.patch(
     `/api/admin/application/${applicationId}`,
+    data,
+    {
+      headers: {
+        Authorization: getAuthorizationHeader(),
+      },
+    }
+  );
+  return response.data;
+};
+
+// send email to applicant
+export const sendEmailToApplicantAdmin = async (applicationId, data) => {
+  const response = await axiosInstance.post(
+    `/api/admin/application/email/${applicationId}`,
     data,
     {
       headers: {

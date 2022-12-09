@@ -23,7 +23,7 @@ import { useAuth } from "../../contexts/authContext";
 import { useUtil } from "../../contexts/utilContext";
 import { getSpecificJob } from "../../api/jobs";
 import { getMyProfile } from "../../api/profile";
-import { applyForJob } from "../../api/applications";
+import { applyForJob, sendEmailToApplicantUser } from "../../api/applications";
 import { ToastConfig } from "../ToastConfig";
 
 import AuthModal from "../AuthModal";
@@ -38,6 +38,7 @@ const JobDescription = () => {
   const jobId = window.location.pathname.split("/")[2];
   const [loading, setLoading] = useState(false);
   const [btnLoading, setBtnLoading] = useState(false);
+  const [btnLoadingText, setBtnLoadingText] = useState("Apply now");
   const toast = useToast();
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -102,8 +103,24 @@ const JobDescription = () => {
         profile: profile,
       };
 
+      const emailData = {
+        status: "applied",
+        job: {
+          id: selectedJob._id,
+          role: selectedJob.role,
+          location: selectedJob.location,
+        },
+        candidate: {
+          name: profile?.name?.first + " " + profile?.name?.last,
+          email: profile?.contact?.email,
+        },
+      };
+
+      console.log(emailData);
+
       try {
         setBtnLoading(true);
+        setBtnLoadingText("Applying for job...");
         const data = await applyForJob(applicationData);
         toast(
           ToastConfig(
@@ -113,8 +130,20 @@ const JobDescription = () => {
           )
         );
         console.log(data);
-        navigate("/applications");
-        setTabIndex(1);
+        const applicationID = data.data._id;
+
+        setBtnLoadingText("Sending confirmation email...");
+
+        // send email to applicant
+        const email = await sendEmailToApplicantUser(applicationID, emailData);
+        console.log(email);
+        toast(
+          ToastConfig(
+            "Success",
+            "Confirmation email sent to your email address",
+            "success"
+          )
+        );
       } catch (error) {
         console.log(error.response ? error.response.data : { error });
         toast(
@@ -128,6 +157,10 @@ const JobDescription = () => {
         );
       }
       setBtnLoading(false);
+      setBtnLoadingText("Apply now");
+
+      navigate("/applications");
+      setTabIndex(1);
     }
   };
 
@@ -254,14 +287,9 @@ const JobDescription = () => {
                 boxShadow={"0px 0px 40px rgba(66, 153, 225, 0.5)"}
                 onClick={handleApplyNow}
                 isLoading={btnLoading}
-                // fontSize={"18px"}
+                loadingText={btnLoadingText}
               >
                 Apply now
-                {/* <img
-                  width={"32px"}
-                  src={fire}
-                  style={{ transform: "translate(4px,-4px)" }}
-                /> */}
               </Button>
             </Box>
           </Box>

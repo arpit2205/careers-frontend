@@ -29,6 +29,7 @@ import { Link } from "react-router-dom";
 import {
   getSingleApplicationAdmin,
   selectOrRejectApplicationAdmin,
+  sendEmailToApplicantAdmin,
 } from "../../api/applications";
 import { ToastConfig } from "../ToastConfig";
 import { useUtil } from "../../contexts/utilContext";
@@ -38,6 +39,10 @@ const ApplicationAdmin = () => {
   const [loading, setLoading] = useState(false);
   const [selectBtnLoading, setSelectBtnLoading] = useState(false);
   const [rejectBtnLoading, setRejectBtnLoading] = useState(false);
+  const [selectBtnLoadingText, setSelectBtnLoadingText] =
+    useState("Select candidate");
+  const [rejectBtnLoadingText, setRejectBtnLoadingText] =
+    useState("Reject candidate");
   const [application, setApplication] = useState({});
   const [feedback, setFeedback] = useState("");
 
@@ -92,6 +97,23 @@ const ApplicationAdmin = () => {
       message: feedback,
     };
 
+    const emailData = {
+      status: "selected",
+      feedback: feedback,
+      candidate: {
+        name:
+          application?.profile?.name?.first +
+          " " +
+          application?.profile?.name?.last,
+        email: application?.profile?.contact?.email,
+      },
+      job: {
+        id: application?.job?.id,
+        role: application?.job?.role,
+        location: application?.job?.location,
+      },
+    };
+
     // verify admin using admin tpin
     const TPIN = window.prompt("Enter Admin TPIN to proceed 👽", "");
     if (TPIN !== process.env.REACT_APP_ADMIN_TPIN) {
@@ -101,13 +123,16 @@ const ApplicationAdmin = () => {
 
     try {
       setSelectBtnLoading(true);
+      setSelectBtnLoadingText("Updating application");
       const data = await selectOrRejectApplicationAdmin(id, applicationData);
       toast(ToastConfig("Success", "Application selected", "success"));
       console.log(data);
-      //rerender component
-      setFeedback("");
-      fetchSingleApplication(applicationId);
-      window.scrollTo(0, 0);
+
+      setSelectBtnLoadingText("Sending email to applicant");
+      // send email to applicant
+      const email = await sendEmailToApplicantAdmin(id, emailData);
+      console.log(email);
+      toast(ToastConfig("Success", "Email sent to applicant", "success"));
     } catch (error) {
       console.log(error.response ? error.response.data : { error });
       toast(
@@ -121,6 +146,12 @@ const ApplicationAdmin = () => {
       );
     }
     setSelectBtnLoading(false);
+    setSelectBtnLoadingText("Select candidate");
+
+    //rerender component
+    setFeedback("");
+    fetchSingleApplication(applicationId);
+    window.scrollTo(0, 0);
   };
 
   const handleReject = async (id) => {
@@ -134,6 +165,23 @@ const ApplicationAdmin = () => {
       message: feedback,
     };
 
+    const emailData = {
+      status: "rejected",
+      feedback: feedback,
+      candidate: {
+        name:
+          application?.profile?.name?.first +
+          " " +
+          application?.profile?.name?.last,
+        email: application?.profile?.contact?.email,
+      },
+      job: {
+        id: application?.job?.id,
+        role: application?.job?.role,
+        location: application?.job?.location,
+      },
+    };
+
     // verify admin using admin tpin
     const TPIN = window.prompt("Enter Admin TPIN to proceed 👽", "");
     if (TPIN !== process.env.REACT_APP_ADMIN_TPIN) {
@@ -143,13 +191,16 @@ const ApplicationAdmin = () => {
 
     try {
       setRejectBtnLoading(true);
+      setRejectBtnLoadingText("Updating application");
       const data = await selectOrRejectApplicationAdmin(id, applicationData);
       toast(ToastConfig("Success", "Application rejected", "success"));
       console.log(data);
-      //rerender component
-      setFeedback("");
-      fetchSingleApplication(applicationId);
-      window.scrollTo(0, 0);
+
+      setRejectBtnLoadingText("Sending email to applicant");
+      // send email to applicant
+      const email = await sendEmailToApplicantAdmin(id, emailData);
+      console.log(email);
+      toast(ToastConfig("Success", "Email sent to applicant", "success"));
     } catch (error) {
       console.log(error.response ? error.response.data : { error });
       toast(
@@ -163,6 +214,12 @@ const ApplicationAdmin = () => {
       );
     }
     setRejectBtnLoading(false);
+    setRejectBtnLoadingText("Reject candidate");
+
+    //rerender component
+    setFeedback("");
+    fetchSingleApplication(applicationId);
+    window.scrollTo(0, 0);
   };
 
   return (
@@ -312,6 +369,28 @@ const ApplicationAdmin = () => {
                     <Text color={"gray.300"}>LAST NAME</Text>
                     <Text color={"gray.500"} fontWeight={"bold"}>
                       {application?.profile?.name?.last}
+                    </Text>
+                  </Box>
+                </Box>
+              </Box>
+
+              <Box w={"100%"} mt={[10]}>
+                <Text color={"blue.500"} fontWeight={"bold"}>
+                  CONTACT
+                </Text>
+
+                <Box d="flex" justifyContent={"flex-start"} w="100%" my={[4]}>
+                  <Box d="flex" flexDirection={"column"} w="50%">
+                    <Text color={"gray.300"}>EMAIL ADDRESS</Text>
+                    <Text color={"gray.500"} fontWeight={"bold"}>
+                      {application?.profile?.contact?.email}
+                    </Text>
+                  </Box>
+
+                  <Box d="flex" flexDirection={"column"} w="50%">
+                    <Text color={"gray.300"}>PHONE NUMBER</Text>
+                    <Text color={"gray.500"} fontWeight={"bold"}>
+                      {application?.profile?.contact?.phone}
                     </Text>
                   </Box>
                 </Box>
@@ -496,6 +575,7 @@ const ApplicationAdmin = () => {
                   py={[6]}
                   onClick={() => handleReject(application?._id)}
                   isLoading={rejectBtnLoading}
+                  loadingText={rejectBtnLoadingText}
                   isDisabled={application?.status !== "applied"}
                 >
                   Reject candidate
@@ -507,6 +587,7 @@ const ApplicationAdmin = () => {
                   py={[6]}
                   onClick={() => handleSelect(application?._id)}
                   isLoading={selectBtnLoading}
+                  loadingText={selectBtnLoadingText}
                   isDisabled={application?.status !== "applied"}
                   boxShadow={"0 5px 20px 0px rgb(72 187 120 / 43%)"}
                 >
