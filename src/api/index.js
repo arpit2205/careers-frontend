@@ -11,7 +11,7 @@ export const getToken = () => {
 export const getAuthorizationHeader = () => `Bearer ${getToken()}`;
 
 const axiosInstance = axios.create({
-  baseURL: "https://proud-red-kit.cyclic.app/",
+  baseURL: "https://careers-backend-1.onrender.com/",
   headers: {
     Authorization: getAuthorizationHeader(),
   },
